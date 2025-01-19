@@ -1,0 +1,91 @@
+/* General Styles */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f9;
+}
+
+header {
+    background-color: #6200ea;
+    color: white;
+    padding: 1rem 2rem;
+    text-align: center;
+}
+
+main {
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Table Styles */
+.vending-machines-table {
+    width: 90%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 1em;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+}
+
+.vending-machines-table thead tr {
+    background-color: #6200ea;
+    color: white;
+    text-align: left;
+}
+
+.vending-machines-table th,
+.vending-machines-table td {
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+}
+
+.vending-machines-table tbody tr:nth-child(even) {
+    background-color: #f3f3f3;
+}
+
+.vending-machines-table tbody tr:hover {
+    background-color: #f1f1f1;
+    cursor: pointer;
+}
+
+.vending-machines-table tbody td a {
+    color: #6200ea;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.vending-machines-table tbody td a:hover {
+    text-decoration: underline;
+}
+
+/* Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+    background-color: white;
+    margin: 10% auto;
+    padding: 20px;
+    border-radius: 10px;
+    width: 50%;
+    text-align: center;
+}
+
+.modal .close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}

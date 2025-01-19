@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vending Machines</title>
+    <link rel="stylesheet" href="./css/style.css">
+</head>
+<body onload="fetchVendingMachines()">
+    <header>
+        <h1>Vending Machines</h1>
+    </header>
+
+    <main>
+        <!-- Table for displaying vending machines -->
+        <table id="vending-machines-table" class="vending-machines-table">
+            <thead>
+                <tr>
+                    <th>Vendor Name</th>
+                    <th>Block</th>
+                    <th>Floor</th>
+                    <th>Payment Methods</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Rows will be dynamically added here -->
+            </tbody>
+        </table>
+    </main>
+
+    <!-- Modal for Item Details -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2>Items in Vending Machine</h2>
+            <ul id="items-list"></ul>
+        </div>
+    </div>
+
+    <script src="./js/scripts.js"></script>
+</body>
+</html>
