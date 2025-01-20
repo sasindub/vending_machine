@@ -1,4 +1,4 @@
-/* General Styles */
+/* General Body and Header Styles */
 body {
     font-family: Arial, sans-serif;
     margin: 0;
@@ -13,18 +13,11 @@ header {
     text-align: center;
 }
 
-main {
-    padding: 2rem;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
 /* Table Styles */
 .vending-machines-table {
     width: 90%;
+    margin: 20px auto;
     border-collapse: collapse;
-    margin: 20px 0;
     font-size: 1em;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
 }
@@ -32,7 +25,6 @@ main {
 .vending-machines-table thead tr {
     background-color: #6200ea;
     color: white;
-    text-align: left;
 }
 
 .vending-machines-table th,
@@ -45,19 +37,22 @@ main {
     background-color: #f3f3f3;
 }
 
-.vending-machines-table tbody tr:hover {
-    background-color: #f1f1f1;
+/* Add Item Button */
+.add-item-btn {
+    display: block;
+    margin: 20px auto;
+    padding: 10px 20px;
+    background-color: #6200ea;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
     cursor: pointer;
+    transition: background-color 0.3s;
 }
 
-.vending-machines-table tbody td a {
-    color: #6200ea;
-    text-decoration: none;
-    font-weight: bold;
-}
-
-.vending-machines-table tbody td a:hover {
-    text-decoration: underline;
+.add-item-btn:hover {
+    background-color: #3700b3;
 }
 
 /* Modal Styles */
@@ -78,7 +73,7 @@ main {
     margin: 10% auto;
     padding: 20px;
     border-radius: 10px;
-    width: 50%;
+    width: 40%;
     text-align: center;
 }
 
@@ -89,3 +84,13 @@ main {
     font-weight: bold;
     cursor: pointer;
 }
+
+#item-details-modal .modal-content {
+    width: 50%;
+}
+
+#add-item-modal .modal-content {
+    width: 40%;
+}
+
+

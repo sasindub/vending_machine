@@ -16,6 +16,70 @@ router.get('/vending-machine/:id', (req, res, next) => {
     });
 });
 
+// Get all items in the database
+router.get('/all', (req, res, next) => {
+    const query = `
+        SELECT item_id, item_name, item_cost, item_image, availability, item_quantity
+        FROM item;
+    `;
+
+    db.query(query, (err, results) => {
+        if (err) {
+            const error = new Error('Failed to fetch all items.');
+            error.status = 500;
+            return next(error); // Pass error to middleware
+        }
+        res.status(200).json(results); // Send all items as response
+    });
+});
+
+// Get an item by item_id
+router.get('/:item_id', (req, res, next) => {
+    const query = `
+        SELECT item_id, item_name, item_cost, item_image, availability, item_quantity
+        FROM item
+        WHERE item_id = ?;
+    `;
+
+    db.query(query, [req.params.item_id], (err, results) => {
+        if (err) {
+            const error = new Error('Failed to fetch item.');
+            error.status = 500;
+            return next(error);
+        }
+
+        // If no item found
+        if (results.length === 0) {
+            return res.status(404).json({ message: 'Item not found' });
+        }
+
+        // Send the found item as the response
+        res.status(200).json(results[0]);
+    });
+});
+
+
+// Add a new item to the database
+router.post('/', (req, res, next) => {
+    const { item_name, item_cost, item_image, availability, item_quantity } = req.body;
+
+    // Validate input
+    if (!item_name || !item_cost || !item_image || availability === undefined || !item_quantity) {
+        const error = new Error('All fields are required: item_name, item_cost, item_image, availability, item_quantity.');
+        error.status = 400; // Bad Request
+        return next(error);
+    }
+
+    const query = `
+        INSERT INTO item (item_name, item_cost, item_image, availability, item_quantity)
+        VALUES (?, ?, ?, ?, ?);
+    `;
+    db.query(query, [item_name, item_cost, item_image, availability, item_quantity], (err, result) => {
+        if (err) return next(new Error('Failed to add item to the database.'));
+        res.status(201).json({ message: 'Item added successfully', id: result.insertId });
+    });
+});
+
 
 // Add an item to a vending machine
 router.post('/vending-machine/:id', (req, res, next) => {
@@ -32,24 +96,43 @@ router.post('/vending-machine/:id', (req, res, next) => {
     });
 });
 
+
 // Update an item
 router.put('/:item_id', (req, res, next) => {
-    const { item_quantity, availability } = req.body;
+    let { item_quantity, availability, item_name, item_cost } = req.body;
 
-    if (!item_quantity || availability === undefined) {
-        return next(new Error('All fields are required: item_quantity, availability.'));
+    // Convert fields to correct types
+    item_quantity = parseInt(item_quantity); // Convert item_quantity to an integer
+    availability = availability === '1' ? 1 : 0; // Convert availability to 1 or 0
+    item_cost = parseFloat(item_cost); // Convert item_cost to a float
+
+    // Basic validation
+    if (isNaN(item_quantity) || isNaN(item_cost) || availability === undefined || !item_name) {
+        return res.status(400).json({ error: 'Invalid data. Please provide valid item_quantity, item_cost, availability, and item_name.' });
     }
 
+    // SQL query to update the item
     const query = `
         UPDATE item
-        SET item_quantity = ?, availability = ?
+        SET item_quantity = ?, availability = ?, item_name = ?, item_cost = ?
         WHERE item_id = ?;
     `;
-    db.query(query, [item_quantity, availability, req.params.item_id], (err) => {
-        if (err) return next(new Error('Failed to update item.'));
-        res.status(200).json({ message: 'Item updated' });
+    
+    db.query(query, [item_quantity, availability, item_name, item_cost, req.params.item_id], (err, result) => {
+        if (err) {
+            return res.status(500).json({ error: 'Failed to update item.' });
+        }
+
+        // Check if any row was affected (i.e., item exists)
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ error: 'Item not found.' });
+        }
+
+        // Success
+        res.status(200).json({ message: 'Item updated successfully' });
     });
 });
+
 
 // Delete an item
 router.delete('/:item_id', (req, res, next) => {

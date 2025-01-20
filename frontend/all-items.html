@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Items</title>
+    <link rel="stylesheet" href="./css/all-items.css">
+</head>
+<body onload="fetchAllItems()">
+    <header>
+        <h1>All Items</h1>
+        <a href="./index.html" class="" style="text-decoration: none; color: white; margin-right: 10px; border: 2px solid rgb(255, 255, 255); padding: 7px 15px 7px 15px; border-radius: 5px;">Back</a>
+        <button class="add-item-btn" onclick="openAddItemModal()">Add New Item</button>
+        
+    </header>
+
+    <main>
+        <!-- Table for displaying items -->
+        <table id="items-table" class="items-table">
+            <thead>
+                <tr>
+                    <th>Item Name</th>
+                    <th>Cost</th>
+                    <th>Image</th>
+                    <th>Availability</th>
+                    <th>Quantity</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Rows will be dynamically added here -->
+            </tbody>
+        </table>
+    </main>
+
+    <!-- Modal for Adding or Updating Items -->
+    <div id="item-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('item-modal')">&times;</span>
+            <h2 id="modal-title">Add New Item</h2>
+            <form id="item-form" onsubmit="handleItemFormSubmit(event)">
+                <label for="item_name">Item Name:</label>
+                <input type="text" id="item_name" name="item_name" required>
+
+                <label for="item_cost">Item Cost:</label>
+                <input type="number" step="0.01" id="item_cost" name="item_cost" required>
+
+                <label for="item_image">Item Image URL:</label>
+                <input type="url" id="item_image" name="item_image" required>
+
+                <label for="availability">Availability:</label>
+                <select id="availability" name="availability" required>
+                    <option value="1">Available</option>
+                    <option value="0">Not Available</option>
+                </select>
+
+                <label for="item_quantity">Quantity:</label>
+                <input type="number" id="item_quantity" name="item_quantity" required>
+
+                <input type="hidden" id="item_id" name="item_id">
+
+                <button type="submit">Save</button>
+            </form>
+        </div>
+    </div>
+    <script>
+        // Fetch items on page load
+        document.addEventListener("DOMContentLoaded", fetchAllItems);
+    </script>
+
+    <script src="./js/all-items.js"></script>
+</body>
+</html>

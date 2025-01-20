@@ -1,0 +1,120 @@
+const apiUrl = "http://localhost:3000/api/items";
+
+function fetchAllItems() {
+    const apiNew = "http://localhost:3000/api/items/all";
+    fetch(apiNew)
+        .then((response) => {
+            if (!response.ok) throw new Error(`Failed to fetch items. Status: ${response.status}`);
+            return response.json();
+        })
+        .then((data) => {
+            console.log("Fetched items:", data);
+            populateItemsTable(data);
+        })
+        .catch((error) => {
+            console.error("Error fetching items:", error);
+            alert("Failed to load items. Please try again later.");
+        });
+}
+
+
+// Populate the items table
+function populateItemsTable(items) {
+    const tableBody = document.querySelector("#items-table tbody");
+    tableBody.innerHTML = "";
+
+    items.forEach((item) => {
+        const row = document.createElement("tr");
+
+        row.innerHTML = `
+            <td>${item.item_name}</td>
+            <td>$${item.item_cost}</td>
+            <td><img src="${item.item_image}" alt="${item.item_name}" style="width:50px;height:50px;"></td>
+            <td>${item.availability ? "Available" : "Not Available"}</td>
+            <td>${item.item_quantity}</td>
+            <td>
+                <button onclick="editItem(${item.item_id})">Edit</button>
+                <button onclick="deleteItem(${item.item_id})">Delete</button>
+            </td>
+        `;
+
+        tableBody.appendChild(row);
+    });
+}
+
+// Open modal for adding a new item
+function openAddItemModal() {
+    document.getElementById("item-form").reset();
+    document.getElementById("item_id").value = ""; // Clear hidden ID field
+    document.getElementById("modal-title").innerText = "Add New Item";
+    openModal("item-modal");
+}
+
+// Open modal for editing an existing item
+function editItem(itemId) {
+    fetch(`${apiUrl}/${itemId}`)
+        .then((response) => {
+            if (!response.ok) throw new Error("Failed to fetch item details.");
+            return response.json();
+        })
+        .then((item) => {
+            document.getElementById("item_name").value = item.item_name;
+            document.getElementById("item_cost").value = item.item_cost;
+            document.getElementById("item_image").value = item.item_image;
+            document.getElementById("availability").value = item.availability ? "1" : "0";
+            document.getElementById("item_quantity").value = item.item_quantity;
+            document.getElementById("item_id").value = item.item_id;
+
+            document.getElementById("modal-title").innerText = "Edit Item";
+            openModal("item-modal");
+        })
+        .catch((error) => console.error("Error fetching item details:", error));
+}
+
+// Handle Add/Edit item form submission
+function handleItemFormSubmit(event) {
+    event.preventDefault();
+
+    const formData = new FormData(event.target);
+    const payload = Object.fromEntries(formData.entries());
+    const itemId = payload.item_id;
+    delete payload.item_id;
+
+    const method = itemId ? "PUT" : "POST";
+    const url = itemId ? `${apiUrl}/${itemId}` : apiUrl;
+
+    fetch(url, {
+        method: method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+    })
+        .then((response) => {
+            console.log(response);
+            if (!response.ok) throw new Error("Failed to save item.");
+            closeModal("item-modal");
+            alert("Success!");
+            fetchAllItems(); // Refresh table
+        })
+        .catch((error) => console.error("Error saving item:", error));
+}
+
+// Delete an item
+function deleteItem(itemId) {
+    if (confirm("Are you sure you want to delete this item?")) {
+        fetch(`${apiUrl}/${itemId}`, { method: "DELETE" })
+            .then((response) => {
+                if (!response.ok) throw new Error("Failed to delete item.");
+                fetchAllItems(); // Refresh table
+            })
+            .catch((error) => console.error("Error deleting item:", error));
+    }
+}
+
+// Open and close modals
+function openModal(modalId) {
+    document.getElementById(modalId).style.display = "block";
+}
+
+function closeModal(modalId) {
+    document.getElementById(modalId).style.display = "none";
+}
