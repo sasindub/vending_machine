@@ -5,27 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vending Machines</title>
     <link rel="stylesheet" href="./css/style.css">
-    <style>
-        /* Link styled as a button */
-.navigate-items-link {
-    display: inline-block;
-    margin-top: 10px;
-    padding: 10px 20px;
-    background-color: #3700b3;
-    color: white;
-    text-decoration: none;
-    border-radius: 5px;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
-
-.navigate-items-link:hover {
-    background-color: #290983;
-}
-
-    </style>
 </head>
 <body onload="fetchVendingMachines()">
     <header>
@@ -34,61 +13,33 @@
     </header>
 
     <main>
-
-        <!-- Table for displaying vending machines -->
-        <table id="vending-machines-table" class="vending-machines-table">
-            <thead>
-                <tr>
-                    <th>Vendor Name</th>
-                    <th>Block</th>
-                    <th>Floor</th>
-                    <th>Payment Methods</th>
-                    <th>Status</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Rows will be dynamically added here -->
-            </tbody>
-        </table>
+        <!-- Container for vending machine cards -->
+        <div id="vending-machines-container" class="vending-machines-container"></div>
     </main>
 
-    <!-- Modal for Item Details -->
+    <!-- Modal for Viewing Items in Vending Machine -->
     <div id="item-details-modal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeModal('item-details-modal')">&times;</span>
             <h2>Items in Vending Machine</h2>
-            <ul id="items-list"></ul>
+            <button class="add-item-to-machine-btn" onclick="openAddToMachineModal()">Add Item to Vending Machine</button>
+            <div id="items-container" class="items-container"></div> <!-- Container for item cards -->
         </div>
     </div>
 
-
-
-    <!-- Modal for Adding Items -->
-    <div id="add-item-modal" class="modal">
+    <!-- Modal for Adding Item to Vending Machine -->
+    <div id="add-to-machine-modal" class="modal">
         <div class="modal-content">
-            <span class="close" onclick="closeModal('add-item-modal')">&times;</span>
-            <h2>Add New Item</h2>
-            <form id="add-item-form" onsubmit="handleAddItem(event)">
-                <label for="item_name">Item Name:</label>
-                <input type="text" id="item_name" name="item_name" required>
+            <span class="close" onclick="closeModal('add-to-machine-modal')">&times;</span>
+            <h2>Select Item to Add</h2>
+            <form id="add-to-machine-form" onsubmit="handleAddToMachine(event)">
+                <label for="item-select">Select Item:</label>
+                <select id="item-select" name="item_id" required></select>
 
-                <label for="item_cost">Item Cost:</label>
-                <input type="number" step="0.01" id="item_cost" name="item_cost" required>
-
-                <label for="item_image">Item Image URL:</label>
-                <input type="url" id="item_image" name="item_image" required>
-
-                <label for="availability">Availability:</label>
-                <select id="availability" name="availability" required>
-                    <option value="1">Available</option>
-                    <option value="0">Not Available</option>
-                </select>
-
-                <label for="item_quantity">Quantity:</label>
+                <label for="item-quantity">Quantity:</label>
                 <input type="number" id="item_quantity" name="item_quantity" required>
 
-                <button type="submit">Add Item</button>
+                <button type="submit" id="sb">Add to Machine</button>
             </form>
         </div>
     </div>

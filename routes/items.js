@@ -84,7 +84,9 @@ router.post('/', (req, res, next) => {
 // Add an item to a vending machine
 router.post('/vending-machine/:id', (req, res, next) => {
     const { item_id, item_quantity } = req.body;
-
+    console.log(req);
+    console.log(item_id)
+    console.log(item_quantity);
     if (!item_id || !item_quantity) {
         return next(new Error('All fields are required: item_id, item_quantity.'));
     }

@@ -13,45 +13,89 @@ header {
     text-align: center;
 }
 
-/* Table Styles */
-.vending-machines-table {
-    width: 90%;
-    margin: 20px auto;
-    border-collapse: collapse;
-    font-size: 1em;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-}
-
-.vending-machines-table thead tr {
-    background-color: #6200ea;
+/* Link styled as a button */
+.navigate-items-link {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 10px 20px;
+    background-color: #3700b3;
     color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
 }
 
-.vending-machines-table th,
-.vending-machines-table td {
-    padding: 12px 15px;
+.navigate-items-link:hover {
+    background-color: #290983;
+}
+
+/* Vending Machines Container */
+.vending-machines-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+    padding: 20px;
+}
+
+/* Vending Machine Card */
+.vending-machine-card {
+    background-color: #ffffff;
     border: 1px solid #ddd;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 15px;
+    width: 300px;
+    text-align: center;
+    transition: transform 0.3s, box-shadow 0.3s;
 }
 
-.vending-machines-table tbody tr:nth-child(even) {
-    background-color: #f3f3f3;
+.vending-machine-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
 }
 
-/* Add Item Button */
-.add-item-btn {
-    display: block;
-    margin: 20px auto;
+/* Vending Machine Image */
+.vending-machine-card img {   
+    height: 200px;
+    border-radius: 10px;
+    object-fit: fill;
+    margin-bottom: 15px;
+}
+
+/* Vendor Name */
+.vending-machine-card h3 {
+    font-size: 20px;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+/* Machine Details */
+.vending-machine-card p {
+    font-size: 14px;
+    color: #666;
+    margin: 5px 0;
+}
+
+/* Actions Button */
+.vending-machine-card .view-items-btn {
+    display: inline-block;
+    margin-top: 10px;
     padding: 10px 20px;
     background-color: #6200ea;
     color: white;
     border: none;
     border-radius: 5px;
-    font-size: 16px;
+    font-size: 14px;
     cursor: pointer;
     transition: background-color 0.3s;
+    text-decoration: none;
 }
 
-.add-item-btn:hover {
+.vending-machine-card .view-items-btn:hover {
     background-color: #3700b3;
 }
 
@@ -73,7 +117,7 @@ header {
     margin: 10% auto;
     padding: 20px;
     border-radius: 10px;
-    width: 40%;
+    width: 50%;
     text-align: center;
 }
 
@@ -85,12 +129,190 @@ header {
     cursor: pointer;
 }
 
-#item-details-modal .modal-content {
-    width: 50%;
+/* Items Container for Modal */
+.items-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+    margin-top: 20px;
 }
 
-#add-item-modal .modal-content {
+/* Item Card for Modal */
+.item-card {
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 15px;
+    width: 250px;
+    text-align: center;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.item-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Item Image */
+.item-card img {
+    max-width: 100%;
+    height: 100px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    object-fit: cover;
+}
+
+/* Item Name */
+.item-card h3 {
+    font-size: 18px;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+/* Item Details */
+.item-card p {
+    font-size: 14px;
+    color: #666;
+    margin: 5px 0;
+}
+
+/* Availability */
+.item-card .availability {
+    font-weight: bold;
+    color: #28a745; /* Green for available */
+}
+
+.item-card .availability.not-available {
+    color: #dc3545; /* Red for not available */
+}
+
+/* Button to add an item to vending machine */
+.add-item-to-machine-btn {
+    display: block;
+    margin: 20px auto 10px;
+    padding: 10px 20px;
+    background-color: #3700b3;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.add-item-to-machine-btn:hover {
+    background-color: #290983;
+}
+
+/* Add to Machine Modal Form Elements */
+#add-to-machine-modal form label {
+    display: block;
+    font-size: 14px;
+    margin-bottom: 5px;
+    color: #333;
+}
+
+#add-to-machine-modal form select,
+#add-to-machine-modal form input {
+    width: 95%;
+    padding: 10px;
+    margin-bottom: 15px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+/* Submit Button for Add to Machine */
+.submit-btn {
+    padding: 10px 15px;
+    background-color: #3700b3;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.submit-btn:hover {
+    background-color: #290983;
+}
+
+/* Add to Machine Modal Styles */
+#add-to-machine-modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+#add-to-machine-modal .modal-content {
+    background-color: white;
+    margin: 10% auto;
+    padding: 20px;
+    border-radius: 10px;
     width: 40%;
+    text-align: left;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
+#add-to-machine-modal .modal-content h2 {
+    margin-bottom: 20px;
+    text-align: center;
+    color: #333;
+}
 
+/* Form Label Styles */
+#add-to-machine-modal form label {
+    display: block;
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #555;
+}
+
+/* Input and Dropdown Styles */
+#add-to-machine-modal form select,
+#add-to-machine-modal form input {
+    width: 100%;
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-bottom: 15px;
+    box-sizing: border-box;
+    transition: border-color 0.3s ease;
+}
+
+#add-to-machine-modal form select:focus,
+#add-to-machine-modal form input:focus {
+    border-color: #6200ea;
+    outline: none;
+}
+
+/* Add to Machine Button Styles */
+#sb{
+    display: block;
+    width: 100%;
+    padding: 12px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    background-color: #3700b3;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    text-align: center;
+    transition: background-color 0.3s ease;
+}
+
+#add-to-machine-modal .submit-btn:hover {
+    background-color: #290983;
+}
