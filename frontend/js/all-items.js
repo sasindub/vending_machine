@@ -1,14 +1,13 @@
 const apiUrl = "http://localhost:3000/api/items";
 
 function fetchAllItems() {
-    const apiNew = "http://localhost:3000/api/items/all";
+    const apiNew = `${apiUrl}/all`;
     fetch(apiNew)
         .then((response) => {
             if (!response.ok) throw new Error(`Failed to fetch items. Status: ${response.status}`);
             return response.json();
         })
         .then((data) => {
-            console.log("Fetched items:", data);
             populateItemsTable(data);
         })
         .catch((error) => {
@@ -17,12 +16,22 @@ function fetchAllItems() {
         });
 }
 
-
 // Populate the items table
 function populateItemsTable(items) {
     const tableBody = document.querySelector("#items-table tbody");
     tableBody.innerHTML = "";
 
+    // Handle case when items is empty or invalid
+    if (!Array.isArray(items) || items.length === 0) {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+            <td colspan="6" style="text-align: center; font-style: italic;">No items found</td>
+        `;
+        tableBody.appendChild(row);
+        return;
+    }
+
+    // Populate rows if items exist
     items.forEach((item) => {
         const row = document.createElement("tr");
 
@@ -40,6 +49,32 @@ function populateItemsTable(items) {
 
         tableBody.appendChild(row);
     });
+}
+
+// Search items by name
+function searchItems() {
+    const searchQuery = document.getElementById('search-input').value.trim();
+
+    // If search query is empty, show all items
+    if (searchQuery === '') {
+        fetchAllItems();
+        return;
+    }
+
+    // Fetch filtered items based on the search query
+    fetch(`${apiUrl}/search?name=${encodeURIComponent(searchQuery)}`)
+        .then((response) => {
+            if (!response.ok) throw new Error(`Failed to search items. Status: ${response.status}`);
+            return response.json();
+        })
+        .then((data) => {
+            console.log("Search results:", data);
+            populateItemsTable(data); // Populate table
+        })
+        .catch((error) => {
+            console.error("Error searching items:", error);
+            alert("Failed to search items. Please try again later.");
+        });
 }
 
 // Open modal for adding a new item
@@ -68,7 +103,9 @@ function editItem(itemId) {
             document.getElementById("modal-title").innerText = "Edit Item";
             openModal("item-modal");
         })
-        .catch((error) => console.error("Error fetching item details:", error));
+        .catch((error) => {
+            console.error("Error fetching item details:", error);
+        });
 }
 
 // Handle Add/Edit item form submission
@@ -89,13 +126,15 @@ function handleItemFormSubmit(event) {
         body: JSON.stringify(payload),
     })
         .then((response) => {
-            console.log(response);
             if (!response.ok) throw new Error("Failed to save item.");
             closeModal("item-modal");
-            alert("Success!");
+            alert(itemId ? "Item updated successfully!" : "Item added successfully!");
             fetchAllItems(); // Refresh table
         })
-        .catch((error) => console.error("Error saving item:", error));
+        .catch((error) => {
+            console.error("Error saving item:", error);
+            alert("Failed to save item. Please try again.");
+        });
 }
 
 // Delete an item
@@ -106,7 +145,10 @@ function deleteItem(itemId) {
                 if (!response.ok) throw new Error("Failed to delete item.");
                 fetchAllItems(); // Refresh table
             })
-            .catch((error) => console.error("Error deleting item:", error));
+            .catch((error) => {
+                console.error("Error deleting item:", error);
+                alert("Failed to delete item. Please try again.");
+            });
     }
 }
 

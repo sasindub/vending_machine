@@ -16,7 +16,34 @@ router.get('/vending-machine/:id', (req, res, next) => {
     });
 });
 
-// Get all items in the database
+// search
+router.get('/search', (req, res, next) => {
+    const { name } = req.query;
+    console.log('Search route hit with name:', name);
+
+    if (!name) {
+        return res.status(400).json({ error: 'Search query (name) is required.' });
+    }
+
+    const query = `
+        SELECT item_id, item_name, item_cost, item_image, availability, item_quantity
+        FROM item
+        WHERE item_name LIKE ?;
+    `;
+
+    db.query(query, [`%${name}%`], (err, results) => {
+        if (err) {
+            console.error('Database query failed:', err);
+            const error = new Error('Failed to search items.');
+            error.status = 500;
+            return next(error);
+        }
+
+        console.log('Query results:', results);
+        res.status(200).json(results || []);
+    });
+});
+
 router.get('/all', (req, res, next) => {
     const query = `
         SELECT item_id, item_name, item_cost, item_image, availability, item_quantity
@@ -144,5 +171,6 @@ router.delete('/:item_id', (req, res, next) => {
         res.status(200).json({ message: 'Item deleted' });
     });
 });
+
 
 module.exports = router;

@@ -9,10 +9,19 @@
 <body onload="fetchAllItems()">
     <header>
         <h1>All Items</h1>
-        <a href="./index.html" class="" style="text-decoration: none; color: white; margin-right: 10px; border: 2px solid rgb(255, 255, 255); padding: 7px 15px 7px 15px; border-radius: 5px;">Back</a>
+        <a href="./index.html" class="" style="text-decoration: none; color: white; margin-right: 10px; border: 2px solid rgb(255, 255, 255); padding: 7px 15px; border-radius: 5px;">Back</a>
         <button class="add-item-btn" onclick="openAddItemModal()">Add New Item</button>
-        
+        <div class="search-container">
+            <input
+                type="text"
+                id="search-input"
+                placeholder="Search items by name..."
+            >
+            <button id="search-btn" class="search-btn" onclick="searchItems()">Search</button>
+        </div>
     </header>
+    
+    
 
     <main>
         <!-- Table for displaying items -->
