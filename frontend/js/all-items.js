@@ -12,7 +12,7 @@ function fetchAllItems() {
         })
         .catch((error) => {
             console.error("Error fetching items:", error);
-            alert("Failed to load items. Please try again later.");
+            // alert("Failed to load items. Please try again later.");
         });
 }
 
@@ -95,7 +95,6 @@ function editItem(itemId) {
         .then((item) => {
             document.getElementById("item_name").value = item.item_name;
             document.getElementById("item_cost").value = item.item_cost;
-            document.getElementById("item_image").value = item.item_image;
             document.getElementById("availability").value = item.availability ? "1" : "0";
             document.getElementById("item_quantity").value = item.item_quantity;
             document.getElementById("item_id").value = item.item_id;
@@ -112,30 +111,29 @@ function editItem(itemId) {
 function handleItemFormSubmit(event) {
     event.preventDefault();
 
-    const formData = new FormData(event.target);
-    const payload = Object.fromEntries(formData.entries());
-    const itemId = payload.item_id;
-    delete payload.item_id;
+    const form = document.getElementById('item-form');
+    const formData = new FormData(form);
 
-    const method = itemId ? "PUT" : "POST";
+    const itemId = formData.get('item_id');
+    const method = itemId ? 'PUT' : 'POST';
     const url = itemId ? `${apiUrl}/${itemId}` : apiUrl;
 
     fetch(url, {
         method: method,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
+        body: formData, // Send FormData with the image file
     })
         .then((response) => {
-            if (!response.ok) throw new Error("Failed to save item.");
-            closeModal("item-modal");
-            alert(itemId ? "Item updated successfully!" : "Item added successfully!");
+            if (!response.ok) throw new Error('Failed to save item.');
+            closeModal('item-modal');
+            alert(itemId ? 'Item updated successfully!' : 'Item added successfully!');
             fetchAllItems(); // Refresh table
         })
         .catch((error) => {
-            console.error("Error saving item:", error);
-            alert("Failed to save item. Please try again.");
+            console.error('Error saving item:', error);
+            alert('An error occurred. Please try again.');
         });
 }
+
 
 // Delete an item
 function deleteItem(itemId) {

@@ -47,29 +47,30 @@
         <div class="modal-content">
             <span class="close" onclick="closeModal('item-modal')">&times;</span>
             <h2 id="modal-title">Add New Item</h2>
-            <form id="item-form" onsubmit="handleItemFormSubmit(event)">
+            <form id="item-form" onsubmit="handleItemFormSubmit(event)" enctype="multipart/form-data">
                 <label for="item_name">Item Name:</label>
                 <input type="text" id="item_name" name="item_name" required>
-
+            
                 <label for="item_cost">Item Cost:</label>
                 <input type="number" step="0.01" id="item_cost" name="item_cost" required>
-
-                <label for="item_image">Item Image URL:</label>
-                <input type="url" id="item_image" name="item_image" required>
-
+            
+                <label for="item_image">Item Image:</label>
+                <input type="file" id="item_image" name="item_image" accept="image/*" required>
+            
                 <label for="availability">Availability:</label>
                 <select id="availability" name="availability" required>
                     <option value="1">Available</option>
                     <option value="0">Not Available</option>
                 </select>
-
+            
                 <label for="item_quantity">Quantity:</label>
                 <input type="number" id="item_quantity" name="item_quantity" required>
-
+            
                 <input type="hidden" id="item_id" name="item_id">
-
+            
                 <button type="submit">Save</button>
             </form>
+            
         </div>
     </div>
     <script>

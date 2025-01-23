@@ -1,6 +1,80 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../db/connection');
+const multer = require('multer');
+const path = require('path');
+
+// Configure Multer for image uploads
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'frontend/img'); // Save images in the 'uploads/' folder
+    },
+    filename: (req, file, cb) => {
+        const uniqueName = `${Date.now()}-${file.originalname}`;
+        cb(null, uniqueName); // Generate a unique filename
+    }
+});
+const upload = multer({ storage });
+
+// Expose the 'uploads/' folder statically
+const app = express();
+app.use('/img', express.static(path.join(__dirname, '../frontend/img')));
+
+// Add a new item to the database with image upload
+router.post('/', upload.single('item_image'), (req, res, next) => {
+    const { item_name, item_cost, availability, item_quantity } = req.body;
+    const item_image = req.file ? `../frontend/img/${req.file.filename}` : null; // Store the image path
+
+    // Validate input
+    if (!item_name || !item_cost || !item_image || availability === undefined || !item_quantity) {
+        const error = new Error('All fields are required: item_name, item_cost, item_image, availability, item_quantity.');
+        error.status = 400; // Bad Request
+        return next(error);
+    }
+
+    const query = `
+        INSERT INTO item (item_name, item_cost, item_image, availability, item_quantity)
+        VALUES (?, ?, ?, ?, ?);
+    `;
+    db.query(query, [item_name, item_cost, item_image, availability, item_quantity], (err, result) => {
+        if (err) {
+            return next(new Error('Failed to add item to the database.'));
+        }
+        res.status(201).json({ message: 'Item added successfully', id: result.insertId });
+    });
+});
+
+// Update an item with optional image upload
+router.put('/:item_id', upload.single('item_image'), (req, res, next) => {
+    let { item_name, item_cost, availability, item_quantity } = req.body;
+    const item_image = req.file ? `../frontend/img/${req.file.filename}` : null; // Store the image path
+
+
+    // Validate input
+    item_quantity = parseInt(item_quantity);
+    availability = availability === '1' ? 1 : 0;
+    item_cost = parseFloat(item_cost);
+
+    if (isNaN(item_quantity) || isNaN(item_cost) || !item_name || availability === undefined) {
+        return res.status(400).json({ error: 'Invalid input data.' });
+    }
+
+    const query = `
+        UPDATE item
+        SET item_name = ?, item_cost = ?, item_image = COALESCE(?, item_image), availability = ?, item_quantity = ?
+        WHERE item_id = ?;
+    `;
+
+    db.query(query, [item_name, item_cost, item_image, availability, item_quantity, req.params.item_id], (err, result) => {
+        if (err) {
+            return next(new Error('Failed to update item.'));
+        }
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ error: 'Item not found.' });
+        }
+        res.status(200).json({ message: 'Item updated successfully' });
+    });
+});
 
 // Get all items in a vending machine
 router.get('/vending-machine/:id', (req, res, next) => {
@@ -86,26 +160,26 @@ router.get('/:item_id', (req, res, next) => {
 });
 
 
-// Add a new item to the database
-router.post('/', (req, res, next) => {
-    const { item_name, item_cost, item_image, availability, item_quantity } = req.body;
+// // Add a new item to the database
+// router.post('/', (req, res, next) => {
+//     const { item_name, item_cost, item_image, availability, item_quantity } = req.body;
 
-    // Validate input
-    if (!item_name || !item_cost || !item_image || availability === undefined || !item_quantity) {
-        const error = new Error('All fields are required: item_name, item_cost, item_image, availability, item_quantity.');
-        error.status = 400; // Bad Request
-        return next(error);
-    }
+//     // Validate input
+//     if (!item_name || !item_cost || !item_image || availability === undefined || !item_quantity) {
+//         const error = new Error('All fields are required: item_name, item_cost, item_image, availability, item_quantity.');
+//         error.status = 400; // Bad Request
+//         return next(error);
+//     }
 
-    const query = `
-        INSERT INTO item (item_name, item_cost, item_image, availability, item_quantity)
-        VALUES (?, ?, ?, ?, ?);
-    `;
-    db.query(query, [item_name, item_cost, item_image, availability, item_quantity], (err, result) => {
-        if (err) return next(new Error('Failed to add item to the database.'));
-        res.status(201).json({ message: 'Item added successfully', id: result.insertId });
-    });
-});
+//     const query = `
+//         INSERT INTO item (item_name, item_cost, item_image, availability, item_quantity)
+//         VALUES (?, ?, ?, ?, ?);
+//     `;
+//     db.query(query, [item_name, item_cost, item_image, availability, item_quantity], (err, result) => {
+//         if (err) return next(new Error('Failed to add item to the database.'));
+//         res.status(201).json({ message: 'Item added successfully', id: result.insertId });
+//     });
+// });
 
 
 // Add an item to a vending machine
@@ -127,40 +201,40 @@ router.post('/vending-machine/:id', (req, res, next) => {
 
 
 // Update an item
-router.put('/:item_id', (req, res, next) => {
-    let { item_quantity, availability, item_name, item_cost } = req.body;
+// router.put('/:item_id', (req, res, next) => {
+//     let { item_quantity, availability, item_name, item_cost } = req.body;
 
-    // Convert fields to correct types
-    item_quantity = parseInt(item_quantity); // Convert item_quantity to an integer
-    availability = availability === '1' ? 1 : 0; // Convert availability to 1 or 0
-    item_cost = parseFloat(item_cost); // Convert item_cost to a float
+//     // Convert fields to correct types
+//     item_quantity = parseInt(item_quantity); // Convert item_quantity to an integer
+//     availability = availability === '1' ? 1 : 0; // Convert availability to 1 or 0
+//     item_cost = parseFloat(item_cost); // Convert item_cost to a float
 
-    // Basic validation
-    if (isNaN(item_quantity) || isNaN(item_cost) || availability === undefined || !item_name) {
-        return res.status(400).json({ error: 'Invalid data. Please provide valid item_quantity, item_cost, availability, and item_name.' });
-    }
+//     // Basic validation
+//     if (isNaN(item_quantity) || isNaN(item_cost) || availability === undefined || !item_name) {
+//         return res.status(400).json({ error: 'Invalid data. Please provide valid item_quantity, item_cost, availability, and item_name.' });
+//     }
 
-    // SQL query to update the item
-    const query = `
-        UPDATE item
-        SET item_quantity = ?, availability = ?, item_name = ?, item_cost = ?
-        WHERE item_id = ?;
-    `;
+//     // SQL query to update the item
+//     const query = `
+//         UPDATE item
+//         SET item_quantity = ?, availability = ?, item_name = ?, item_cost = ?
+//         WHERE item_id = ?;
+//     `;
     
-    db.query(query, [item_quantity, availability, item_name, item_cost, req.params.item_id], (err, result) => {
-        if (err) {
-            return res.status(500).json({ error: 'Failed to update item.' });
-        }
+//     db.query(query, [item_quantity, availability, item_name, item_cost, req.params.item_id], (err, result) => {
+//         if (err) {
+//             return res.status(500).json({ error: 'Failed to update item.' });
+//         }
 
-        // Check if any row was affected (i.e., item exists)
-        if (result.affectedRows === 0) {
-            return res.status(404).json({ error: 'Item not found.' });
-        }
+//         // Check if any row was affected (i.e., item exists)
+//         if (result.affectedRows === 0) {
+//             return res.status(404).json({ error: 'Item not found.' });
+//         }
 
-        // Success
-        res.status(200).json({ message: 'Item updated successfully' });
-    });
-});
+//         // Success
+//         res.status(200).json({ message: 'Item updated successfully' });
+//     });
+// });
 
 
 // Delete an item
